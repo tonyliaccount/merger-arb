@@ -24,6 +24,8 @@ def main():
     j_list = json_to_list(fp)
     cur = conn.cursor()
     list_to_db(cur, j_list)
+    conn.commit()
+    conn.close()
 
 
 
@@ -46,10 +48,8 @@ def list_to_db(db, articles: list):
     # Add missing deals into the database
     for d in deals:
         data_tuple = (d[0], d[1], d[2], d[3])
-        db.execute("INSERT INTO financings(Datetime, Title, Borrower"
+        db.execute("INSERT INTO financings(Datetime, Title, Borrower,"
                    + "Amount) VALUES(?,?,?,?);", data_tuple)
-        db.commit()
-    db.close()
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """

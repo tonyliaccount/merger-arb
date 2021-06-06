@@ -19,5 +19,6 @@ def name_and_amount(scraped_list:list) -> list:
             if ent.label_ == "ORG" and company is None: 
                 company = ent.text
             # Add the date, company, and amt to the list
-        names_list.append([line[0], line[1], company, amount])
+        if company is not None:
+            names_list.append([line[0], line[1], company, amount])
     return names_list
