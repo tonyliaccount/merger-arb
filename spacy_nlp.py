@@ -10,12 +10,14 @@ def name_and_amount(scraped_list:list) -> list:
     names_list = []
     for line in scraped_list:
         # Process the title
-        doc = nlp(line[0])
-        for ent in doc.ents():
-            # Is there at least one 
-            # Extract the first ORG (junior miner) from text
-            company = nlp
-            # Optional: Extract the first MONEY
+        doc = nlp(line[1])
+        company = None
+        amount = None
+        for ent in doc.ents:
+            if ent.label_ == "MONEY" and amount is None:
+                amount = ent.text
+            if ent.label_ == "ORG" and company is None: 
+                company = ent.text
             # Add the date, company, and amt to the list
-            names_list.append([line[0], company, amount])
+        names_list.append([line[0], line[1], company, amount])
     return names_list

@@ -33,7 +33,7 @@ def add_articles(r_url: str, articles: list):
     json_content = json.loads(content)
     if check_page(r_url):
         for article in json_content['articles']:
-            articles.append([article['title'], article['publish_up']])
+            articles.append(article['publish_up'], [article['title']])
 
 
 def check_page(r_url: str) -> bool:
