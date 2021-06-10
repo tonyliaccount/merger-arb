@@ -1,5 +1,6 @@
 # Mining-Deal-League
 > As for me, I am tormented with an everlasting itch for things remote. I love to sail forbidden seas, and land on barbarous coasts.
+> 
 > _Moby Dick, Herman Melville_
 
 Mining Deal League is an effort to use Natural Language Processing (via Explosion.ai's Spacy library) to create a league table tracking financing activities for junior mining companies. This will be hosted on Heroku and display some visualizations of both the companies who have raised the most money through financing, but also how the industry as a whole tends towards succesful capital sourcing activities. 
