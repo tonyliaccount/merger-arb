@@ -6,7 +6,7 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
-def extract_money(scraped_list:list) -> list:
+def extract_money(scraped_list: list) -> list:
     """Returns the first monetary value present in a list of headlines"""
     names_list = []
     for line in scraped_list:

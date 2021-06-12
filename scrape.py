@@ -6,13 +6,14 @@ import urllib.request
 import json
 from datetime import datetime
 
+
 def scrape(topics: list, start_date: str) -> list:
     """This function takes in one or more topics a start date and
     returns titles and timestamps for each article in that topic."""
     url = 'https://www.juniorminingnetwork.com/mining-topics/topic/'
     articles = []
     for topic in topics:
-        exceeded_start_date = False
+        # Start at the most recent content
         page_number = 1
         r_url = (url + topic + '?&page=' + str(page_number)
                  + "&format=json")
@@ -22,10 +23,10 @@ def scrape(topics: list, start_date: str) -> list:
         while content_on_page:
             articles.extend(gather_articles(r_url, start_date))
             page_number += 1
-            # Now check if the next page has content
-            content_on_page = check_page(r_url)
             r_url = (url + topic + '?&page=' + str(page_number)
                      + "&format=json")
+            # Check if the next page has content
+            content_on_page = check_page(r_url)
             # Check whether the start date has been reached
             if up_to_date(articles, start_date):
                 return articles
@@ -40,9 +41,11 @@ def gather_articles(r_url: str, start_date: str):
     json_content = json.loads(content)
     for article in json_content['articles']:
         article_date = datetime.strptime(article['publish_up'],
-                                         "%y/%m/%d %H:%M:%S")
+                                         "%Y-%m-%d %H:%M:%S")
+        # Stop once the old articles are reached
         if article_date > start_date:
-            articles.append({"Date":article['publish_up'], "Title": article['title']})
+            articles.append({"Date": article['publish_up'],
+                            "Title": article['title']})
     return articles
 
 
@@ -58,8 +61,13 @@ def check_page(r_url: str) -> bool:
 
 
 def up_to_date(articles, start_date):
-    """Checks if the articles list is up to date""" 
+    """Checks if the articles list is up to date"""
     for article in articles:
-        if article['Date'] <= start_date:
+        article_date = datetime.strptime(article['Date'],
+                                        "%Y-%m-%d %H:%M:%S")
+        if article_date <= start_date:
             return True
     return False
+
+
+#scrape("Financing", "2020-10-09 20:30:01")
