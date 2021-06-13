@@ -1,5 +1,18 @@
 import sqlite3
 from sqlite3 import Error
+import spacy
+
+nlp = spacy.load("en_core_web_sm")
+
+def extract_money(text: str) -> list:
+    """Returns the first monetary value present in a list of headlines"""
+    # Process the headline
+    doc = nlp(text)
+    amount = None
+    for ent in doc.ents:
+        if ent.label_ == "MONEY" and amount is None:
+            amount = ent.text
+    return amount
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """

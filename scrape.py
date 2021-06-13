@@ -5,6 +5,12 @@ one or more topics and a start date"""
 import urllib.request
 import json
 from datetime import datetime
+import helpers
+from helpers import extract_money
+import sqlite3
+
+conn = sqlite3.connect('deals.db')
+db = conn.cursor()
 
 
 def scrape(topics: list, start_date: str) -> list:
@@ -44,8 +50,16 @@ def gather_articles(r_url: str, start_date: str):
                                          "%Y-%m-%d %H:%M:%S")
         # Stop once the old articles are reached
         if article_date > start_date:
-            articles.append({"Date": article['publish_up'],
-                            "Title": article['title']})
+            # Figure out who the company is
+            name = identify_company(article["title"])
+            amount = extract_money(article["title"])
+            if name is not None and amount is not None:
+                articles.append({
+                                "Date": article['publish_up'],
+                                "Title": article['title'],
+                                "Borrower": name,
+                                "Amount": amount,
+                                })
     return articles
 
 
@@ -70,4 +84,33 @@ def up_to_date(articles, start_date):
     return False
 
 
-#scrape("Financing", "2020-10-09 20:30:01")
+def identify_company(headline: str):
+    """Given a string, determine which company is being
+    referred to. If there are multiple matches, return the longest.
+    If there are no matches, return None. If there are multiple companies
+    in the input string, only find the first one."""
+    # Return companies that match any part of the query.
+    companies = db.execute("SELECT common_name FROM listings WHERE INSTR(?, common_name) > 0;",
+                           (headline,)).fetchall()
+    length = len(companies)
+    if length > 1:
+        first = earliest_matches(companies, headline)
+        return max(first, key=len)
+    elif length == 1:
+        return companies[0][0]
+    else:
+        return None
+
+
+def earliest_matches(companies, headline) -> list:
+    """ Creates a list of one or more companies that appear at the
+    earliest part of the headline. """
+    index = None
+    for c in companies:
+        location = headline.find(c[0])
+        if index is None or location < index:
+            index = location
+            earliest = [c[0]]
+        elif location == index:
+            earliest.append(c[0])
+    return earliest
