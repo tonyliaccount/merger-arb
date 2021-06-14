@@ -5,7 +5,7 @@ one or more topics and a start date"""
 import urllib.request
 import json
 from datetime import datetime
-from helpers import extract_money
+from helpers import extract_money, format_currency
 import sqlite3
 
 conn = sqlite3.connect('deals.db')
@@ -51,13 +51,14 @@ def gather_articles(r_url: str, start_date: str):
         if article_date > start_date:
             # Figure out who the company is
             amount = extract_money(article["title"])
+            formatted_amount = format_currency(amount)
             company = identify_company(article['title'])
-            if amount is not None and company is not None:
+            if formatted_amount is not None and company is not None:
                 articles.append({
                                 "Date": article['publish_up'],
                                 "Title": article['title'],
                                 "Borrower": company,
-                                "Amount": amount,
+                                "Amount": formatted_amount,
                                 })
     return articles
 
@@ -112,3 +113,4 @@ def earliest_matches(companies, headline) -> list:
         elif location == index:
             earliest.append(c[0])
     return earliest
+

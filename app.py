@@ -3,7 +3,7 @@ import atexit
 import scrape
 import helpers
 #from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime
+from datetime import date, datetime
 import timeit
 import pandas as pd
 
@@ -41,3 +41,23 @@ def scrape_to_db():
                    + "Amount) VALUES(?,?,?,?);",
                    (d["Date"], d["Title"], d["Borrower"], d["Amount"]))
     conn.commit()
+
+# First extract the transaction ID and Amounts into a dictionary
+# Then iterate over that dictionary and format and replace them
+# Then INSERT INTO the database at the intersection of the IDs
+new_list = []
+values = db.execute("SELECT id, DateTime, Amount, Borrower FROM financings;").fetchall()
+for v in values:
+    if v[2] is not None:
+        date = datetime.strptime(v[1], "%Y-%m-%d %H:%M:%S")
+        formatted_amount = helpers.format_currency(v[2], date)
+        name = scrape.identify_company(v[3])
+        new_list.append([v[0], formatted_amount, name, v[1]])
+
+df = pd.DataFrame(new_list)
+df.to_csv('output.csv')
+
+# for n in new_list:
+#     print(n[1])
+#     print(n[0])
+    #db.execute("UPDATE financings SET Amount = ? WHERE id = ?;", (n[1], n[0]))
