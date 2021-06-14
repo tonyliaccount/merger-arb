@@ -2,7 +2,9 @@ import sqlite3
 from sqlite3 import Error
 import spacy
 
+
 nlp = spacy.load("en_core_web_sm")
+
 
 def extract_money(text: str) -> list:
     """Returns the first monetary value present in a list of headlines"""
@@ -14,6 +16,7 @@ def extract_money(text: str) -> list:
             amount = ent.text
     return amount
 
+
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
     conn = None
@@ -23,12 +26,14 @@ def create_connection(db_file):
     except Error as e:
         print(e)
 
+
 def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
     except Error as e:
         print(e)
+
 
 def list_to_db(db, articles: list):
     # Process the list using Spacy
@@ -38,6 +43,7 @@ def list_to_db(db, articles: list):
         data_tuple = (d[0], d[1], d[2], d[3])
         db.execute("INSERT INTO financings(Datetime, Title, Borrower,"
                    + "Amount) VALUES(?,?,?,?);", data_tuple)
+
 
 # conn = create_connection('deals.db')
 # fp = r'C:\Users\Adam\OneDrive\HSA\Resources\JuniorMiningNetwork\Financing'
