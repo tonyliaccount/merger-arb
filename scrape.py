@@ -51,14 +51,12 @@ def gather_articles(r_url: str, start_date: str):
         if article_date > start_date:
             # Figure out who the company is
             amount = extract_money(article["title"])
-            if amount is not None:
+            company = identify_company(article['title'])
+            if amount is not None and company is not None:
                 articles.append({
                                 "Date": article['publish_up'],
                                 "Title": article['title'],
-                                "Borrower": article['stock']['title'],
-                                "Symbol": article['stock']['symbol'],
-                                "Website": article['stock']['website'],
-                                "President": article['stock']['president'],
+                                "Borrower": company,
                                 "Amount": amount,
                                 })
     return articles
@@ -78,46 +76,39 @@ def check_page(r_url: str) -> bool:
 def up_to_date(articles, start_date):
     """Checks if the articles list is up to date"""
     for article in articles:
-        article_date = datetime.strptime(article['Date'],
-                                        "%Y-%m-%d %H:%M:%S")
+        article_date = datetime.strptime(article['Date'], "%Y-%m-%d %H:%M:%S")
         if article_date <= start_date:
             return True
     return False
 
 
+def identify_company(headline: str):
+    """Given a string, determine which company is being
+    referred to. If there are multiple matches, return the longest.
+    If there are no matches, return None. If there are multiple companies
+    in the input string, only find the first one."""
+    # Return companies that match any part of the query.
+    companies = db.execute("SELECT common_name FROM listings WHERE INSTR(?, common_name) > 0;",
+                           (headline,)).fetchall()
+    length = len(companies)
+    if length > 1:
+        first = earliest_matches(companies, headline)
+        return max(first, key=len)
+    elif length == 1:
+        return companies[0][0]
+    else:
+        return None
 
 
-
-
-# Legacy: I realized that I don't need to use my company database for this
-
-# def identify_company(headline: str):
-#     """Given a string, determine which company is being
-#     referred to. If there are multiple matches, return the longest.
-#     If there are no matches, return None. If there are multiple companies
-#     in the input string, only find the first one."""
-#     # Return companies that match any part of the query.
-#     companies = db.execute("SELECT common_name FROM listings WHERE INSTR(?, common_name) > 0;",
-#                            (headline,)).fetchall()
-#     length = len(companies)
-#     if length > 1:
-#         first = earliest_matches(companies, headline)
-#         return max(first, key=len)
-#     elif length == 1:
-#         return companies[0][0]
-#     else:
-#         return None
-
-
-# def earliest_matches(companies, headline) -> list:
-#     """ Creates a list of one or more companies that appear at the
-#     earliest part of the headline. """
-#     index = None
-#     for c in companies:
-#         location = headline.find(c[0])
-#         if index is None or location < index:
-#             index = location
-#             earliest = [c[0]]
-#         elif location == index:
-#             earliest.append(c[0])
-#     return earliest
+def earliest_matches(companies, headline) -> list:
+    """ Creates a list of one or more companies that appear at the
+    earliest part of the headline. """
+    index = None
+    for c in companies:
+        location = headline.find(c[0])
+        if index is None or location < index:
+            index = location
+            earliest = [c[0]]
+        elif location == index:
+            earliest.append(c[0])
+    return earliest

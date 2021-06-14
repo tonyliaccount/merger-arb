@@ -13,8 +13,8 @@ app = Flask(__name__)
 # scheduler.add_job(func=sqh.scrape_to_db, trigger="interval", minutes=15)
 # scheduler.start()
 # atexit.register(lambda: scheduler.shutdown())
-#conn = helpers.create_connection('deals.db')
-#db = conn.cursor()
+conn = helpers.create_connection('deals.db')
+db = conn.cursor()
 
 
 @app.route("/")
