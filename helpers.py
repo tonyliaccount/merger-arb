@@ -70,6 +70,7 @@ def create_connection(db_file):
 
 
 def create_table(conn, create_table_sql):
+    # Does this need to be here?
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
@@ -78,6 +79,7 @@ def create_table(conn, create_table_sql):
 
 
 def list_to_db(db, articles: list):
+    # Does this need to be here?
     # Process the list using Spacy
     deals = spacy_nlp.name_and_amount(articles)
     # Add missing deals into the database

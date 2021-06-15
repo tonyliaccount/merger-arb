@@ -42,6 +42,8 @@ def scrape_to_db():
                    (d["Date"], d["Title"], d["Borrower"], d["Amount"]))
     conn.commit()
 
+
+# This all has to goooo
 # First extract the transaction ID and Amounts into a dictionary
 # Then iterate over that dictionary and format and replace them
 # Then INSERT INTO the database at the intersection of the IDs
