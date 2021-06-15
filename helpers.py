@@ -50,7 +50,7 @@ def format_currency(currency: str, date: datetime.datetime) -> float:
     return None
 
 
-def USD_CAD_rate(date: datetime.datetime)->float:
+def USD_CAD_rate(date: datetime.datetime) -> float:
     """Converts a value in USD to equivalent CAD given a date"""
     # ToDo: Figure out why this isn't working
     # c = CurrencyRates()
