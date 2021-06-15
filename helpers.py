@@ -29,13 +29,13 @@ def format_currency(currency: str, date: datetime.datetime) -> float:
     # Is the Value in USD?
     is_USD = True if "US" in currency else False
     # Determine if Million or Billion are used in headline
-    regex_M = "\d+ ?([mM]|[mM]illion)"
+    regex_M = r"\d+ ?([mM]|[mM]illion)"
     match_M = re.search(regex_M, currency)
     is_M = True if match_M is not None else False
-    regex_B = "\d+ ?([bB]|[bB]illion)"
+    regex_B = r"\d+ ?([bB]|[bB]illion)"
     match_B = re.search(regex_B, currency)
     is_B = True if match_B is not None and is_M is None else False
-    regex_d = "\d+\.?\d?\d?"
+    regex_d = r"\d+\.?\d?\d?"
     amt_match = re.search(regex_d, remove_commas)
     if amt_match is not None:
         amount = float(amt_match.group(0))

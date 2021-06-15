@@ -5,7 +5,7 @@ import helpers
 def test_spacy_extracts_amount():
     """ Spacy handles a valid MONEY entity in the string"""
     string = ('Major Precious Metals Announces C$10,000,000 Non-Brokered'
-          ' Private Placement')
+              ' Private Placement')
     assert(helpers.extract_money(string) == "10,000,000")
 
 
