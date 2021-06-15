@@ -69,24 +69,24 @@ def create_connection(db_file):
         print(e)
 
 
-def create_table(conn, create_table_sql):
-    # Does this need to be here?
-    try:
-        c = conn.cursor()
-        c.execute(create_table_sql)
-    except Error as e:
-        print(e)
+# def create_table(conn, create_table_sql):
+#     # Does this need to be here?
+#     try:
+#         c = conn.cursor()
+#         c.execute(create_table_sql)
+#     except Error as e:
+#         print(e)
 
 
-def list_to_db(db, articles: list):
-    # Does this need to be here?
-    # Process the list using Spacy
-    deals = spacy_nlp.name_and_amount(articles)
-    # Add missing deals into the database
-    for d in deals:
-        data_tuple = (d[0], d[1], d[2], d[3])
-        db.execute("INSERT INTO financings(Datetime, Title, Borrower,"
-                   + "Amount) VALUES(?,?,?,?);", data_tuple)
+# def list_to_db(db, articles: list):
+#     # Does this need to be here?
+#     # Process the list using Spacy
+#     deals = spacy_nlp.name_and_amount(articles)
+#     # Add missing deals into the database
+#     for d in deals:
+#         data_tuple = (d[0], d[1], d[2], d[3])
+#         db.execute("INSERT INTO financings(Datetime, Title, Borrower,"
+#                    + "Amount) VALUES(?,?,?,?);", data_tuple)
 
 
 # conn = create_connection('deals.db')

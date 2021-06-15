@@ -23,7 +23,7 @@ def scrape(topics: list, start_date: str) -> list:
         r_url = (url + topic + '?&page=' + str(page_number)
                  + "&format=json")
         # Is there content on the page?
-        content_on_page = check_page(r_url)
+        content_on_page = valid_page(r_url)
         # Continue running script until there's no content.
         while content_on_page:
             articles.extend(gather_articles(r_url, start_date))
@@ -31,9 +31,9 @@ def scrape(topics: list, start_date: str) -> list:
             r_url = (url + topic + '?&page=' + str(page_number)
                      + "&format=json")
             # Check if the next page has content
-            content_on_page = check_page(r_url)
+            content_on_page = valid_page(r_url)
             # Check whether the start date has been reached
-            if up_to_date(articles, start_date):
+            if is_last_page(articles, start_date):
                 return articles
     return articles
 
@@ -63,7 +63,7 @@ def gather_articles(r_url: str, start_date: str):
     return articles
 
 
-def check_page(r_url: str) -> bool:
+def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
     response = urllib.request.urlopen(r_url)
     content = response.read()
@@ -74,9 +74,12 @@ def check_page(r_url: str) -> bool:
         return False
 
 
-def up_to_date(articles, start_date):
-    """Checks if the articles list is up to date"""
-    for article in articles:
+def is_last_page(r_url: str, start_date: datetime.datetime) -> bool:
+    """Checks if a page contains an article with a date after the start date"""
+    response = urllib.request.urlopen(r_url)
+    content = response.read()
+    json_content = json.loads(content)
+    for article in json_content['articles']:
         article_date = datetime.strptime(article['Date'], "%Y-%m-%d %H:%M:%S")
         if article_date <= start_date:
             return True
