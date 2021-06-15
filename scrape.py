@@ -113,4 +113,3 @@ def earliest_matches(companies, headline) -> list:
         elif location == index:
             earliest.append(c[0])
     return earliest
-

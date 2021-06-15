@@ -1,4 +1,5 @@
-import pytest
+from datetime import datetime
+import helpers
 
 
 def test_spacy_extracts_amount():
@@ -26,18 +27,21 @@ def test_spacy_handles_multiple():
 
 def test_currency_formatting_no_suffix():
     """ Converts an amount string found by Spacy to a float"""
+    date = datetime(2021, 1, 1, 0, 0, 0)
     string = "10,000,000"
-    assert(helpers.format_currency(string) == 10000000)
+    assert(helpers.format_currency(string, date) == 10000000)
 
-def test_currency_formatting_letter_suffix()):
+
+def test_currency_formatting_letter_suffix():
     """ Converts an amount string found by Spacy to a float, where the string
     include a letter (either [mM] or [bB])."""
+    date = datetime(2021, 1, 1, 0, 0, 0)
     string = "C$612 Million"
-    assert(helpers.format_currency(string) == 612000000)
+    assert(helpers.format_currency(string, date) == 612000000)
+
 
 def test_CAD_USD_conversion():
     """ Converts a string containing a US figure into CAD """
+    # TODO: Ensure that the
     # TODO: add a string with a US figure
     # TODO: assert that the resulting conversion is correct
-
-
