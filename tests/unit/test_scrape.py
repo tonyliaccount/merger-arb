@@ -31,11 +31,14 @@ def test_valid_page_without_content():
 
 def test_is_last_page_true():
     # TODO: Mock a urllib respose object with a JSON fixture representing
-    # TODO: a page with an article. Assert that check_page returns False.
+    # a page with an article that has a date that exceeds the.
+    # Assert that check_page returns False.
     pass
 
 
 def test_is_last_page_false():
+    # TODO: Mock a urllib respose object with a JSON fixture representing
+    # TODO: a page with an article. Assert that check_page returns False.
     pass
 
 
@@ -45,13 +48,16 @@ def test_identify_company_single():
 
 
 def test_identify_company_multiple():
-    # Pass in a string with one company and see if it can identify the company
+    # Pass in a string with multiple companies and see if it can correctly
+    # identify and return the first one.
     pass
 
 
 def test_identify_company_none():
-    # Pass in a string with one company and see if it can identify the company
+    # Pass in a string with no companies and determine if the function
+    # correctly returns None.
     pass
 
 def test_earliest_matches():
+    # Ensure that this fuction 
     pass

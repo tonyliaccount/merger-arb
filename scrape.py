@@ -28,8 +28,7 @@ def scrape(topics: list, start_date: str) -> list:
         while content_on_page:
             articles.extend(gather_articles(r_url, start_date))
             page_number += 1
-            r_url = (url + topic + '?&page=' + str(page_number)
-                     + "&format=json")
+            r_url = url + topic + '?&page=' + str(page_number) + "&format=json"
             # Check if the next page has content
             content_on_page = valid_page(r_url)
             # Check whether the start date has been reached
@@ -87,12 +86,13 @@ def is_last_page(r_url: str, start_date: datetime.datetime) -> bool:
 
 
 def identify_company(headline: str):
-    """Given a string, determine which company is being
-    referred to. If there are multiple matches, return the longest.
-    If there are no matches, return None. If there are multiple companies
-    in the input string, only find the first one."""
+    """Given a string, determine which company is being referred to.
+    If there are multiple matches, return the longest. If there are no
+    matches, return None. If there are multiple companies in the input
+    string, only find the first one."""
     # Return companies that match any part of the query.
-    companies = db.execute("SELECT common_name FROM listings WHERE INSTR(?, common_name) > 0;",
+    companies = db.execute("SELECT common_name FROM listings WHERE " +
+                           "INSTR(?, common_name) > 0;",
                            (headline,)).fetchall()
     length = len(companies)
     if length > 1:
