@@ -73,7 +73,7 @@ def valid_page(r_url: str) -> bool:
         return False
 
 
-def is_last_page(r_url: str, start_date: datetime.datetime) -> bool:
+def is_last_page(r_url: str, start_date: datetime) -> bool:
     """Checks if a page contains an article with a date after the start date"""
     response = urllib.request.urlopen(r_url)
     content = response.read()

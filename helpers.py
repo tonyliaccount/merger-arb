@@ -1,9 +1,9 @@
 import sqlite3
 from sqlite3 import Error
-import spacy
 from forex_python.converter import CurrencyRates
 import datetime
 import re
+import spacy
 
 
 nlp = spacy.load("en_core_web_sm")

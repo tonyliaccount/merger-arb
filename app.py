@@ -1,13 +1,11 @@
-from flask import Flask, render_template, request
-import atexit
+#from flask import Flask, render_template, request
+#import atexit
 import scrape
 import helpers
 #from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import date, datetime
-import timeit
 import pandas as pd
-
-app = Flask(__name__)
+#app = Flask(__name__)
 
 # scheduler = BackgroundScheduler()
 # scheduler.add_job(func=sqh.scrape_to_db, trigger="interval", minutes=15)
@@ -17,13 +15,13 @@ conn = helpers.create_connection('deals.db')
 db = conn.cursor()
 
 
-@app.route("/")
-def index():
-    #deals = db.execute("SELECT * FROM financings;")
-    #conn.commit()
-    #return render_template("index.html", deals=deals)
-    #return render_template("index.html")
-    return "WOW"
+# @app.route("/")
+# def index():
+#     #deals = db.execute("SELECT * FROM financings;")
+#     #conn.commit()
+#     #return render_template("index.html", deals=deals)
+#     #return render_template("index.html")
+#     return "WOW"
 
 
 def scrape_to_db():
@@ -48,18 +46,18 @@ def scrape_to_db():
 # Then iterate over that dictionary and format and replace them
 # Then INSERT INTO the database at the intersection of the IDs
 new_list = []
-values = db.execute("SELECT id, DateTime, Amount, Borrower FROM financings;").fetchall()
+values = db.execute("SELECT id, DateTime, Amount, Borrower " +
+                    "FROM financings;").fetchall()
 for v in values:
     if v[2] is not None:
-        date = datetime.strptime(v[1], "%Y-%m-%d %H:%M:%S")
-        formatted_amount = helpers.format_currency(v[2], date)
+        f_amount = helpers.format_currency(v[2], date)
         name = scrape.identify_company(v[3])
-        new_list.append([v[0], formatted_amount, name, v[1]])
+        new_list.append([v[0], f_amount, name])
 
-df = pd.DataFrame(new_list)
-df.to_csv('output.csv')
+#df = pd.DataFrame(new_list)
+#df.to_csv('output.csv')
 
-# for n in new_list:
-#     print(n[1])
-#     print(n[0])
-    #db.execute("UPDATE financings SET Amount = ? WHERE id = ?;", (n[1], n[0]))
+for n in new_list:
+    if n[2] is not None:
+        db.execute("UPDATE financings SET Amount = ?, Borrower = ? WHERE id = ?;",
+                (n[1], n[2], n[0]))
