@@ -46,18 +46,27 @@ def scrape_to_db():
 # Then iterate over that dictionary and format and replace them
 # Then INSERT INTO the database at the intersection of the IDs
 new_list = []
-values = db.execute("SELECT id, DateTime, Amount, Borrower " +
+values = db.execute("SELECT id, DateTime, Title, Amount, Borrower " +
                     "FROM financings;").fetchall()
 for v in values:
+    # If there is an amount, extract it
     if v[2] is not None:
         f_amount = helpers.format_currency(v[2], date)
-        name = scrape.identify_company(v[3])
-        new_list.append([v[0], f_amount, name])
+    # Identify company names and add to list
+    name = scrape.identify_company(v[3])
+    new_list.append([v[0], f_amount, name])
 
 #df = pd.DataFrame(new_list)
 #df.to_csv('output.csv')
 
 for n in new_list:
-    if n[2] is not None:
+    # If there is an amount and a recognized name
+    if n[2] is not None and n[1] is not None:
         db.execute("UPDATE financings SET Amount = ?, Borrower = ? WHERE id = ?;",
-                (n[1], n[2], n[0]))
+                   (n[1], n[2], n[0]))
+    # If just the amount is missing
+    elif n[1] 
+    else:
+        db.execute("UPDATE financings SET Amount = 0, Borrower = 'Unknown' WHERE id = ?;",
+                   (n[1], n[2], n[0]))
+
