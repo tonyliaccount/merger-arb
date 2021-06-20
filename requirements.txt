@@ -37,3 +37,4 @@ tzlocal==2.1
 urllib3==1.26.5
 wasabi==0.8.2
 Werkzeug==2.0.1
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0-py3-none-any.whl
