@@ -5,11 +5,8 @@ one or more topics and a start date"""
 import urllib.request
 import json
 from datetime import datetime
-from helpers import extract_money, format_currency
+from helpers import create_connection, extract_money, format_currency
 import sqlite3
-
-conn = sqlite3.connect('deals.db')
-db = conn.cursor()
 
 
 def scrape(topics: list, start_date: str) -> list:
@@ -26,15 +23,33 @@ def scrape(topics: list, start_date: str) -> list:
         content_on_page = valid_page(r_url)
         # Continue running script until there's no content.
         while content_on_page:
+            # Poll Junior Mining Network for more articles
             articles.extend(gather_articles(r_url, start_date))
             page_number += 1
             r_url = url + topic + '?&page=' + str(page_number) + "&format=json"
             # Check if the next page has content
             content_on_page = valid_page(r_url)
             # Check whether the start date has been reached
-            if is_last_page(articles, start_date):
+            if is_last_page(r_url, start_date):
                 return articles
     return articles
+
+
+def scrape_to_db():
+    conn = create_connection('deals.db')
+    db = conn.cursor()
+    # Get the last date in the database so we can start scraping after.
+    start_date = db.execute("SELECT DateTime FROM financings ORDER BY DateTime"
+                            + " DESC LIMIT 1;").fetchall()
+    start_date = datetime.strptime(start_date[0][0], "%Y-%m-%d %H:%M:%S")
+    # Create a list of the latest headlines
+    deals = scrape(["financing"], start_date)
+    # Add new deals into the database
+    for d in deals:
+        db.execute("INSERT INTO financings(Datetime, Title, Borrower,"
+                   + "Amount) VALUES(?,?,?,?);",
+                   (d["Date"], d["Title"], d["Borrower"], d["Amount"]))
+    conn.commit()
 
 
 def gather_articles(r_url: str, start_date: str):
@@ -50,7 +65,7 @@ def gather_articles(r_url: str, start_date: str):
         if article_date > start_date:
             # Figure out who the company is
             amount = extract_money(article["title"])
-            formatted_amount = format_currency(amount)
+            formatted_amount = format_currency(amount, article_date)
             company = identify_company(article['title'])
             if formatted_amount is not None and company is not None:
                 articles.append({
@@ -79,7 +94,7 @@ def is_last_page(r_url: str, start_date: datetime) -> bool:
     content = response.read()
     json_content = json.loads(content)
     for article in json_content['articles']:
-        article_date = datetime.strptime(article['Date'], "%Y-%m-%d %H:%M:%S")
+        article_date = datetime.strptime(article['publish_up'], "%Y-%m-%d %H:%M:%S")
         if article_date <= start_date:
             return True
     return False
@@ -91,6 +106,8 @@ def identify_company(headline: str):
     matches, return None. If there are multiple companies in the input
     string, only find the first one."""
     # Return companies that match any part of the query.
+    conn = create_connection('deals.db')
+    db = conn.cursor()
     companies = db.execute("SELECT common_name FROM listings WHERE " +
                            "INSTR(?, common_name) > 0;",
                            (headline,)).fetchall()
