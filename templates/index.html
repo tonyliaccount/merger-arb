@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 
-{% block title %}
-    Home
-{% endblock %}
-
 {% block main %}
   <body> 
     <h1>Latest Transactions</h1> 
@@ -13,13 +9,13 @@
                 <th>Date</th>
                 <th>Headline</th>
                 <th>Company</th>
-                <th>Amount ($ CAD M)</th>
+                <th style = "white-space: nowrap">Amount ($ CAD M)</th>
             </tr>
         </thead>
         <tbody>
           {% for deal in deals %}
               <tr>
-                  <td >{{ deal[0]|strftime }}</td>
+                  <td style = "white-space: nowrap;">{{ deal[0]|strftime }}</td>
                   <td>{{ deal[1] }}</td>
                   <td>{{ deal[2] }}</td>
                   <td>{{ deal[3]|fmt_money }}</td>
