@@ -14,6 +14,7 @@ Mining Deal League is a web-scraping effort to use to create a league table trac
 - Visualizes the success of the mining industry as a whole for external fundraising
 
 ## Todo:
-1. Incorporate D3 charts onto the homepage.
-2. Create user login and password.
-3. Finish writing tests and add to CI/CD of Heroku.
+1. Make CSS look nice for table and on mobile.
+2. Incorporate D3 charts onto the homepage.
+3. Create user login and password.
+4. Finish writing tests and add to CI/CD of Heroku.
