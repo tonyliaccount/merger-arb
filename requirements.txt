@@ -6,7 +6,6 @@ certifi==2021.5.30
 chardet==4.0.0
 click==7.1.2
 cymem==2.0.5
-en-core-web-sm==3.0.0
 Flask==2.0.1
 forex-python==1.6
 gunicorn==20.1.0
