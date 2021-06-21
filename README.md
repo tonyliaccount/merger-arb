@@ -3,17 +3,19 @@
 > 
 > _Moby Dick, Herman Melville_
 
-Mining Deal League is an effort to use Natural Language Processing (via Explosion.ai's Spacy library) to create a league table tracking financing activities for junior mining companies. This will be hosted on Heroku and display some visualizations of both the companies who have raised the most money through financing, but also how the industry as a whole tends towards succesful capital sourcing activities. 
+Mining Deal League is a web-scraping effort to use to create a league table tracking financing activities for mining companies. This is hosted on Heroku and displays a table of both the companies who have raised the most money through financing, but will also show how the industry as a whole tends towards succesful capital sourcing activities. 
 
-## The App:
-You can find the app at I WILL PUT LINK HERE WHEN FINISHED WITH PROJECT
+## See it in Action
+[Mining Deal League!](https://mining-deal-league.herokuapp.com) 
 
 ## Features:
-- Shows total financing raised by junior mining companies
-- Automatically adds new deals as they are reported daily on Junior Mining Network
-- Visualizes the success of the junior mining industry as a whole for fundraising
+- Shows total financing raised by mining companies
+- Automatically adds new deals as they are reported daily on mining news feeds. 
+- Visualizes the success of the mining industry as a whole for external fundraising
 
 ## Todo:
-1. Clean up SQL database (replace borrower with tagged name, remove f_amt)
-2. Make Flask app automatically scrape
-2. Choose JS Charting framework and build site
+1. Make CSS look nice for table and on mobile.
+2. Refactor and optimize code.
+3. Incorporate D3 charts onto the homepage.
+4. Create user login and password.
+5. Finish writing tests and add to CI/CD of Heroku.
