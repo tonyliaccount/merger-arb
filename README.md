@@ -6,7 +6,7 @@
 Mining Deal League is a web-scraping effort to use to create a league table tracking financing activities for mining companies. This is hosted on Heroku and displays a table of both the companies who have raised the most money through financing, but will also show how the industry as a whole tends towards succesful capital sourcing activities. 
 
 ## See it in Action
-[Mining Deal League!](https://junior-mining-deals.herokuapp.com) 
+[Mining Deal League!](https://mining-deal-league.herokuapp.com) 
 
 ## Features:
 - Shows total financing raised by mining companies
