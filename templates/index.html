@@ -7,15 +7,15 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Headline</th>
+                <th class="wrap-headline">Headline</th>
                 <th>Company</th>
-                <th style = "white-space: nowrap">Amount ($ CAD M)</th>
+                <th>Amount ($ CAD M)</th>
             </tr>
         </thead>
         <tbody>
           {% for deal in deals %}
               <tr>
-                  <td style = "white-space: nowrap;">{{ deal[0]|strftime }}</td>
+                  <td>{{ deal[0]|strftime }}</td>
                   <td>{{ deal[1] }}</td>
                   <td>{{ deal[2] }}</td>
                   <td>{{ deal[3]|fmt_money }}</td>
