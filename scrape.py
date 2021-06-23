@@ -57,7 +57,7 @@ def gather_articles(r_url: str, start_date: str):
     """Given a web url, add all articles up to a certain date."""
     articles = []
     ua = UserAgent()
-    r = requests.get(r_url, headers={"headers":ua.random})
+    r = requests.get(r_url, headers={"headers":ua.chrome})
     json_content = r.json()
     for article in json_content['articles']:
         article_date = datetime.strptime(article['publish_up'],
@@ -81,7 +81,7 @@ def gather_articles(r_url: str, start_date: str):
 def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
     ua = UserAgent()
-    r = requests.get(r_url, headers={"headers":ua.random})
+    r = requests.get(r_url, headers={"headers":ua.chrome})
     json_content = r.json()
     if json_content['articles'] != []:
         return True
@@ -93,7 +93,7 @@ def is_last_page(r_url: str, start_date: datetime) -> bool:
     """Checks if a page contains an article with a date after the start date"""
     # response = urllib.request.urlopen(r_url)
     ua = UserAgent()
-    r = requests.get(r_url, headers={"headers":ua.random})
+    r = requests.get(r_url, headers={"headers":ua.chrome})
     json_content = r.json()
     for article in json_content['articles']:
         article_date = datetime.strptime(article['publish_up'], "%Y-%m-%d %H:%M:%S")
