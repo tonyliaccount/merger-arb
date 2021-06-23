@@ -81,6 +81,7 @@ def valid_page(r_url: str) -> bool:
     r = requests.get(r_url, headers={"headers":ua})
     json_content = r.json()
     if json_content['articles'] != []:
+        print(json_content)
         return True
     else:
         return False
