@@ -23,6 +23,7 @@ pydantic==1.7.4
 pyparsing==2.4.7
 python-dateutil==2.8.1
 pytz==2021.1
+random-user-agent==1.0.1
 requests==2.25.1
 simplejson==3.17.2
 six==1.16.0
