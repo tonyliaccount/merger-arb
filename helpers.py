@@ -4,7 +4,7 @@ from forex_python.converter import CurrencyRates
 import datetime
 import re
 import spacy
-
+import requests
 
 nlp = spacy.load("en_core_web_sm")
 
