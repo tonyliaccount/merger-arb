@@ -1,18 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import atexit
 import scrape
 import helpers
-from apscheduler.schedulers.background import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # Configure application
 app = Flask(__name__)
-
-sched = BlockingScheduler()
-
-@sched.scheduled_job('interval', minutes=1)
-def update():
-    scrape.scrape_to_db()
-
-sched.start()
+# Create a periodic job to scrape new financing activities
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=scrape.scrape_to_db, trigger="interval", minutes=1)
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
+# Start the application by updating with the latest data
 
 
 @app.route("/")
