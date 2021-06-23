@@ -79,6 +79,7 @@ def gather_articles(r_url: str, start_date: str):
 
 def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
+    print(r_url)
     response = urllib.request.urlopen(r_url)
     content = response.read()
     json_content = json.loads(content)
