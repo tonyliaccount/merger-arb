@@ -8,11 +8,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 app = Flask(__name__)
 # Create a periodic job to scrape new financing activities
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=scrape.scrape_to_db, trigger="interval", hours=6)
+scheduler.add_job(func=scrape.scrape_to_db, trigger="interval", minutes=1)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 # Start the application by updating with the latest data
-scrape.scrape_to_db()
 
 
 @app.route("/")
