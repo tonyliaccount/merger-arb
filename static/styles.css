@@ -21,7 +21,11 @@ nav .navbar-brand .green
 {
     color: #2e944b;
 }
-
+@media (min-width: 1200px){
+    .container{
+        width: 1000px;
+    }
+}
 main .form-control
 {
     /* Center form controls */
