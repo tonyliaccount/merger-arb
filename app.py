@@ -3,7 +3,6 @@ import atexit
 import scrape
 import helpers
 from apscheduler.schedulers.background import BackgroundScheduler
-import babel
 
 # Configure application
 app = Flask(__name__)
@@ -12,16 +11,18 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=scrape.scrape_to_db, trigger="interval", hours=6)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
-
+# Start the application by updating with the latest data
+scrape.scrape_to_db()
 
 
 @app.route("/")
 def index():
     conn = helpers.create_connection('deals.db')
     db = conn.cursor()
-    deals = db.execute("SELECT DateTime, Title, Borrower, Amount FROM financings ORDER BY DateTime DESC LIMIT 50;")
+    deals = db.execute("SELECT DateTime, Title, Borrower, Amount FROM" +
+                       " financings ORDER BY DateTime DESC LIMIT 50;")
     conn.commit()
-    return render_template("index.html", deals=deals) 
+    return render_template("index.html", deals=deals)
 
 
 @app.template_filter('strftime')

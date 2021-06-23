@@ -6,7 +6,6 @@ import urllib.request
 import json
 from datetime import datetime
 from helpers import create_connection, extract_money, format_currency
-import sqlite3
 
 
 def scrape(topics: list, start_date: str) -> list:
@@ -36,6 +35,7 @@ def scrape(topics: list, start_date: str) -> list:
 
 
 def scrape_to_db():
+    """Calls scrape function and adds its results to the database"""
     conn = create_connection('deals.db')
     db = conn.cursor()
     # Get the last date in the database so we can start scraping after.
@@ -53,7 +53,7 @@ def scrape_to_db():
 
 
 def gather_articles(r_url: str, start_date: str):
-    """This function adds all articles on a page up to a certain date."""
+    """Given a web url, add all articles up to a certain date."""
     articles = []
     response = urllib.request.urlopen(r_url)
     content = response.read()
@@ -104,8 +104,8 @@ def identify_company(headline: str):
     """Given a string, determine which company is being referred to.
     If there are multiple matches, return the longest. If there are no
     matches, return None. If there are multiple companies in the input
-    string, only find the first one."""
-    # Return companies that match any part of the query.
+    string, only find the first one.Return companies that match any part
+    of the query."""
     conn = create_connection('deals.db')
     db = conn.cursor()
     companies = db.execute("SELECT common_name FROM listings WHERE " +
