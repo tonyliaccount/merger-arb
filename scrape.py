@@ -2,7 +2,6 @@
 Its usage is for the scrape() function to be called periodically, given
 one or more topics and a start date"""
 
-import json
 from datetime import datetime
 from helpers import create_connection, extract_money, format_currency
 from fake_useragent import UserAgent
