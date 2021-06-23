@@ -15,7 +15,8 @@ Mining Deal League is a web-scraping effort to use to create a league table trac
 
 ## Todo:
 1. Make CSS look nice for table and on mobile.
-2. Refactor and optimize code.
-3. Incorporate D3 charts onto the homepage.
-4. Create user login and password.
-5. Finish writing tests and add to CI/CD of Heroku.
+2. Figure out why app isn't updating scraped headlines.
+3. Refactor and optimize code.
+4. Incorporate D3 charts onto the homepage.
+5. Create user login and password.
+6. Finish writing tests and add to CI/CD of Heroku.
