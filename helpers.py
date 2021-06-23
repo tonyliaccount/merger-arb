@@ -9,6 +9,19 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
+def get_proxies():
+    """ Generates a list of proxies to bamboozle the website."""
+    url = 'https://free-proxy-list.net/'
+    response = requests.get(url)
+    parser = fromstring(response.text)
+    proxies = set()
+    for i in parser.xpath('//tbody/tr')[:10]:
+        #Grabbing IP and corresponding PORT
+        proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+        proxies.add(proxy)
+    return proxies
+
+
 def extract_money(text: str) -> str:
     """Returns the first monetary value present in a list of headlines"""
     # Process the headline

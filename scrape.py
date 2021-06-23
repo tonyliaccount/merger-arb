@@ -3,9 +3,10 @@ Its usage is for the scrape() function to be called periodically, given
 one or more topics and a start date"""
 
 from datetime import datetime
-from helpers import create_connection, extract_money, format_currency
+import helpers
 import requests
 from fake_useragent import UserAgent
+from itertools import cycle
 
 ua = UserAgent()
 
@@ -14,30 +15,34 @@ def scrape(topics: list, start_date: str) -> list:
     returns titles and timestamps for each article in that topic."""
     url = 'https://www.juniorminingnetwork.com/mining-topics/topic/'
     articles = []
+    # Leaving the door open in case I ever want to include multiple topics
     for topic in topics:
         # Start at the most recent content
         page_number = 1
         r_url = (url + topic + '?&page=' + str(page_number)
                  + "&format=json")
         # Is there content on the page?
-        content_on_page = valid_page(r_url)
+        proxies = helpers.get_proxies()
+        proxy_pool = cycle(proxies)
+        proxy = next(proxy_pool)
+        content_on_page = valid_page(r_url, proxy)
         # Continue running script until there's no content.
         while content_on_page:
             # Poll Junior Mining Network for more articles
-            articles.extend(gather_articles(r_url, start_date))
+            articles.extend(gather_articles(r_url, start_date, proxy))
             page_number += 1
             r_url = url + topic + '?&page=' + str(page_number) + "&format=json"
             # Check if the next page has content
-            content_on_page = valid_page(r_url)
+            content_on_page = valid_page(r_url, proxy)
             # Check whether the start date has been reached
-            if is_last_page(r_url, start_date):
+            if is_last_page(r_url, start_date, proxy):
                 return articles
     return articles
 
 
 def scrape_to_db():
     """Calls scrape function and adds its results to the database"""
-    conn = create_connection('deals.db')
+    conn = helpers.create_connection('deals.db')
     db = conn.cursor()
     # Get the last date in the database so we can start scraping after.
     start_date = db.execute("SELECT DateTime FROM financings ORDER BY DateTime"
@@ -53,10 +58,13 @@ def scrape_to_db():
     conn.commit()
 
 
-def gather_articles(r_url: str, start_date: str):
+def gather_articles(r_url: str, start_date: str, proxy):
     """Given a web url, add all articles up to a certain date."""
     articles = []
-    r = requests.get(r_url, headers={"headers":ua.random})
+    r = requests.get(r_url,
+                     headers={"headers": ua.random},
+                     proxies=proxy
+                     )
     json_content = r.json()
     for article in json_content['articles']:
         article_date = datetime.strptime(article['publish_up'],
@@ -64,8 +72,8 @@ def gather_articles(r_url: str, start_date: str):
         # Stop once the old articles are reached
         if article_date > start_date:
             # Figure out who the company is
-            amount = extract_money(article["title"])
-            formatted_amount = format_currency(amount, article_date)
+            amount = helpers.extract_money(article["title"])
+            formatted_amount = helpers.format_currency(amount, article_date)
             company = identify_company(article['title'])
             if formatted_amount is not None and company is not None:
                 articles.append({
@@ -77,10 +85,13 @@ def gather_articles(r_url: str, start_date: str):
     return articles
 
 
-def valid_page(r_url: str) -> bool:
+def valid_page(r_url: str, proxy) -> bool:
     """Determine if there is some content on this page"""
     print(f"The url passed to valid_page was {r_url}")
-    r = requests.get(r_url, headers={"headers":ua.random})
+    r = requests.get(r_url,
+                     headers={"headers": ua.random},
+                     proxies=proxy
+                     )
     print(f"Valid_page got {r}")
     json_content = r.json()
     if json_content['articles'] != []:
@@ -89,11 +100,14 @@ def valid_page(r_url: str) -> bool:
         return False
 
 
-def is_last_page(r_url: str, start_date: datetime) -> bool:
+def is_last_page(r_url: str, start_date: datetime, proxy) -> bool:
     """Checks if a page contains an article with a date after the start date"""
     # response = urllib.request.urlopen(r_url)
     print(f"The url passed to is_last_page was {r_url}")
-    r = requests.get(r_url, headers={"headers":ua.random})
+    r = requests.get(r_url,
+                     headers={"headers": ua.random},
+                     proxies=proxy
+                     )
     print(f"Is last page got {r}")
     json_content = r.json()
     for article in json_content['articles']:
@@ -109,7 +123,7 @@ def identify_company(headline: str):
     matches, return None. If there are multiple companies in the input
     string, only find the first one.Return companies that match any part
     of the query."""
-    conn = create_connection('deals.db')
+    conn = helpers.create_connection('deals.db')
     db = conn.cursor()
     companies = db.execute("SELECT common_name FROM listings WHERE " +
                            "INSTR(?, common_name) > 0;",
