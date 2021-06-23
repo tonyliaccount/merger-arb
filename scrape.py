@@ -79,6 +79,7 @@ def gather_articles(r_url: str, start_date: str):
 def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
     r = requests.get(r_url, headers={"headers":ua})
+    print(r)
     json_content = r.json()
     if json_content['articles'] != []:
         return True
