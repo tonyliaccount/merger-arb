@@ -2,10 +2,11 @@
 Its usage is for the scrape() function to be called periodically, given
 one or more topics and a start date"""
 
-import urllib.request
 import json
 from datetime import datetime
 from helpers import create_connection, extract_money, format_currency
+from fake_useragent import UserAgent
+import requests
 
 
 def scrape(topics: list, start_date: str) -> list:
@@ -55,9 +56,9 @@ def scrape_to_db():
 def gather_articles(r_url: str, start_date: str):
     """Given a web url, add all articles up to a certain date."""
     articles = []
-    response = urllib.request.urlopen(r_url)
-    content = response.read()
-    json_content = json.loads(content)
+    ua = UserAgent()
+    r = requests.get(r_url, headers={"headers":ua.random})
+    json_content = r.json()
     for article in json_content['articles']:
         article_date = datetime.strptime(article['publish_up'],
                                          "%Y-%m-%d %H:%M:%S")
@@ -79,10 +80,9 @@ def gather_articles(r_url: str, start_date: str):
 
 def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
-    print(r_url)
-    response = urllib.request.urlopen(r_url)
-    content = response.read()
-    json_content = json.loads(content)
+    ua = UserAgent()
+    r = requests.get(r_url, headers={"headers":ua.random})
+    json_content = r.json()
     if json_content['articles'] != []:
         return True
     else:
@@ -91,9 +91,10 @@ def valid_page(r_url: str) -> bool:
 
 def is_last_page(r_url: str, start_date: datetime) -> bool:
     """Checks if a page contains an article with a date after the start date"""
-    response = urllib.request.urlopen(r_url)
-    content = response.read()
-    json_content = json.loads(content)
+    # response = urllib.request.urlopen(r_url)
+    ua = UserAgent()
+    r = requests.get(r_url, headers={"headers":ua.random})
+    json_content = r.json()
     for article in json_content['articles']:
         article_date = datetime.strptime(article['publish_up'], "%Y-%m-%d %H:%M:%S")
         if article_date <= start_date:
