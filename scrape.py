@@ -15,7 +15,11 @@ logging.getLogger().setLevel(logging.DEBUG)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
-
+proxyDict = {
+              "http"  : os.environ.get('FIXIE_URL', ''),
+              "https" : os.environ.get('FIXIE_URL', '')
+            }
+            
 def scrape(topics: list, start_date: str) -> list:
     """This function takes in one or more topics a start date and
     returns titles and timestamps for each article in that topic."""
@@ -92,6 +96,7 @@ def valid_page(r_url: str) -> bool:
     print(f"The url passed to valid_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
+                     proxies=proxyDict
                      )
     h = r.request.headers
     print(h)
@@ -108,6 +113,7 @@ def is_last_page(r_url: str, start_date: datetime) -> bool:
     print(f"The url passed to is_last_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
+                     proxies=proxyDict
                      )
     print(f"Is last page got {r}")
     json_content = r.json()
@@ -153,3 +159,13 @@ def earliest_matches(companies, headline) -> list:
     return earliest
 
 valid_page("https://www.juniorminingnetwork.com/mining-topics/topic/financing?&page=200&format=json")
+
+
+
+{'User-Agent': 'python-requests/2.23.0', 'Accept-Encoding': 'gzip, deflate',
+ 'Accept': '*/*', 'Connection': 'keep-alive', 
+ 'headers': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36'}
+
+ {'User-Agent': 'python-requests/2.25.1', 'Accept-Encoding': 'gzip, deflate',
+  'Accept': '*/*', 'Connection': 'keep-alive',
+  'headers': 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; InfoPath.1; SV1; .NET CLR 3.8.36217; WOW64; en-US)'}
