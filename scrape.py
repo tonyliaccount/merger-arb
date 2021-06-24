@@ -87,7 +87,7 @@ def gather_articles(r_url: str, start_date: str, proxy):
 
 def valid_page(r_url: str, proxy) -> bool:
     """Determine if there is some content on this page"""
-    print(f"The url passed to valid_page was {r_url}")
+    print(f"The url passed to valid_page was {r_url}, proxy was {proxy}")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
                      proxies=proxy
@@ -103,7 +103,7 @@ def valid_page(r_url: str, proxy) -> bool:
 def is_last_page(r_url: str, start_date: datetime, proxy) -> bool:
     """Checks if a page contains an article with a date after the start date"""
     # response = urllib.request.urlopen(r_url)
-    print(f"The url passed to is_last_page was {r_url}")
+    print(f"The url passed to is_last_page was {r_url}, proxy was {proxy}")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
                      proxies=proxy
