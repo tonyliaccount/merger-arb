@@ -7,8 +7,14 @@ import helpers
 import requests
 from fake_useragent import UserAgent
 from itertools import cycle
+import logging
 
 ua = UserAgent()
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.DEBUG)
+requests_log.propagate = True
 
 def scrape(topics: list, start_date: str) -> list:
     """This function takes in one or more topics a start date and
@@ -22,9 +28,9 @@ def scrape(topics: list, start_date: str) -> list:
         r_url = (url + topic + '?&page=' + str(page_number)
                  + "&format=json")
         # Is there content on the page?
-        proxies = helpers.get_proxies()
-        proxy_pool = cycle(proxies)
-        proxy = next(proxy_pool)
+        custom_proxies = helpers.get_proxies()
+        proxy_pool = cycle(custom_proxies)
+        proxy = {"http":next(proxy_pool), "https":next(proxy_pool)}
         content_on_page = valid_page(r_url, proxy)
         # Continue running script until there's no content.
         while content_on_page:
