@@ -8,6 +8,7 @@ import requests
 from fake_useragent import UserAgent
 from itertools import cycle
 import logging
+import os
 
 ua = UserAgent()
 logging.basicConfig()
