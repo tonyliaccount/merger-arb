@@ -157,15 +157,3 @@ def earliest_matches(companies, headline) -> list:
         elif location == index:
             earliest.append(c[0])
     return earliest
-
-valid_page("https://www.juniorminingnetwork.com/mining-topics/topic/financing?&page=200&format=json")
-
-
-
-{'User-Agent': 'python-requests/2.23.0', 'Accept-Encoding': 'gzip, deflate',
- 'Accept': '*/*', 'Connection': 'keep-alive', 
- 'headers': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36'}
-
- {'User-Agent': 'python-requests/2.25.1', 'Accept-Encoding': 'gzip, deflate',
-  'Accept': '*/*', 'Connection': 'keep-alive',
-  'headers': 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; InfoPath.1; SV1; .NET CLR 3.8.36217; WOW64; en-US)'}
