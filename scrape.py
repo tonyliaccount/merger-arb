@@ -93,7 +93,8 @@ def valid_page(r_url: str) -> bool:
     r = requests.get(r_url,
                      headers={"headers": ua.random},
                      )
-    print(f"Valid_page got {r}")
+    h = r.request.headers
+    print(h)
     json_content = r.json()
     if json_content['articles'] != []:
         return True
@@ -150,3 +151,5 @@ def earliest_matches(companies, headline) -> list:
         elif location == index:
             earliest.append(c[0])
     return earliest
+
+valid_page("https://www.juniorminingnetwork.com/mining-topics/topic/financing?&page=200&format=json")
