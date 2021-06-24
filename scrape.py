@@ -28,20 +28,17 @@ def scrape(topics: list, start_date: str) -> list:
         r_url = (url + topic + '?&page=' + str(page_number)
                  + "&format=json")
         # Is there content on the page?
-        custom_proxies = helpers.get_proxies()
-        proxy_pool = cycle(custom_proxies)
-        proxy = {"http":next(proxy_pool), "https":next(proxy_pool)}
-        content_on_page = valid_page(r_url, proxy)
+        content_on_page = valid_page(r_url)
         # Continue running script until there's no content.
         while content_on_page:
             # Poll Junior Mining Network for more articles
-            articles.extend(gather_articles(r_url, start_date, proxy))
+            articles.extend(gather_articles(r_url, start_date))
             page_number += 1
             r_url = url + topic + '?&page=' + str(page_number) + "&format=json"
             # Check if the next page has content
-            content_on_page = valid_page(r_url, proxy)
+            content_on_page = valid_page(r_url)
             # Check whether the start date has been reached
-            if is_last_page(r_url, start_date, proxy):
+            if is_last_page(r_url, start_date):
                 return articles
     return articles
 
@@ -64,12 +61,11 @@ def scrape_to_db():
     conn.commit()
 
 
-def gather_articles(r_url: str, start_date: str, proxy):
+def gather_articles(r_url: str, start_date: str):
     """Given a web url, add all articles up to a certain date."""
     articles = []
     r = requests.get(r_url,
                      headers={"headers": ua.random},
-                     proxies=proxy
                      )
     json_content = r.json()
     for article in json_content['articles']:
@@ -91,12 +87,11 @@ def gather_articles(r_url: str, start_date: str, proxy):
     return articles
 
 
-def valid_page(r_url: str, proxy) -> bool:
+def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
-    print(f"The url passed to valid_page was {r_url}, proxy was {proxy}")
+    print(f"The url passed to valid_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
-                     proxies=proxy
                      )
     print(f"Valid_page got {r}")
     json_content = r.json()
@@ -106,13 +101,12 @@ def valid_page(r_url: str, proxy) -> bool:
         return False
 
 
-def is_last_page(r_url: str, start_date: datetime, proxy) -> bool:
+def is_last_page(r_url: str, start_date: datetime) -> bool:
     """Checks if a page contains an article with a date after the start date"""
     # response = urllib.request.urlopen(r_url)
-    print(f"The url passed to is_last_page was {r_url}, proxy was {proxy}")
+    print(f"The url passed to is_last_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
-                     proxies=proxy
                      )
     print(f"Is last page got {r}")
     json_content = r.json()
