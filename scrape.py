@@ -3,6 +3,7 @@ Its usage is for the scrape() function to be called periodically, given
 one or more topics and a start date"""
 
 from datetime import datetime
+from urllib.request import HTTPDigestAuthHandler
 import helpers
 import requests
 from fake_useragent import UserAgent
@@ -73,6 +74,7 @@ def gather_articles(r_url: str, start_date: str):
     """Given a web url, add all articles up to a certain date."""
     articles = []
     r = requests.get(r_url,
+                     auth=HTTPDigestAuthHandler('user', 'pass'),
                      headers={"headers": ua.random},
                      )
     json_content = r.json()
@@ -99,6 +101,7 @@ def valid_page(r_url: str) -> bool:
     """Determine if there is some content on this page"""
     print(f"The url passed to valid_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
+                     auth=HTTPDigestAuthHandler('user','pass'),
                      headers={"headers": ua.random},
                      )
     h = r.request.headers
@@ -115,6 +118,7 @@ def is_last_page(r_url: str, start_date: datetime) -> bool:
     # response = urllib.request.urlopen(r_url)
     print(f"The url passed to is_last_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
+                     auth=HTTPDigestAuthHandler('user','pass'),
                      headers={"headers": ua.random},
                      )
     print(f"Is last page got {r}")
