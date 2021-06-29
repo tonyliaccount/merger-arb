@@ -9,6 +9,7 @@ from fake_useragent import UserAgent
 from itertools import cycle
 import logging
 import os
+import http.client as http_client
 
 ua = UserAgent()
 logging.basicConfig()
@@ -16,10 +17,12 @@ logging.getLogger().setLevel(logging.DEBUG)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
-proxyDict = {
-              "http"  : os.environ.get('FIXIE_URL', ''),
-              "https" : os.environ.get('FIXIE_URL', '')
-            }
+http_client.HTTPConnection.debuglevel = 1
+
+# proxyDict = {
+#               "http"  : os.environ.get('FIXIE_URL', ''),
+#               "https" : os.environ.get('FIXIE_URL', '')
+#             }
             
 def scrape(topics: list, start_date: str) -> list:
     """This function takes in one or more topics a start date and
@@ -97,7 +100,6 @@ def valid_page(r_url: str) -> bool:
     print(f"The url passed to valid_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
-                     proxies=proxyDict
                      )
     h = r.request.headers
     print(h)
@@ -114,7 +116,6 @@ def is_last_page(r_url: str, start_date: datetime) -> bool:
     print(f"The url passed to is_last_page was {r_url}, proxy was NA")
     r = requests.get(r_url,
                      headers={"headers": ua.random},
-                     proxies=proxyDict
                      )
     print(f"Is last page got {r}")
     json_content = r.json()
