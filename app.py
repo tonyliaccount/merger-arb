@@ -7,21 +7,23 @@ from apscheduler.schedulers.background import BackgroundScheduler
 # Configure application
 app = Flask(__name__)
 app.debug = False
-# Create a periodic job to scrape new financing activities
+# Create a periodic job to scrape latest stock prices
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=scrape.scrape_to_db, trigger="interval", minutes=1)
+scheduler.add_job(func=helpers.add_to_db(short = 'KLG.TO', long = 'AEM.TO'),
+                  trigger="interval", days=1)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route("/")
 def index():
-    conn = helpers.create_connection('deals.db')
+    conn = helpers.create_connection('positions.db')
     db = conn.cursor()
-    deals = db.execute("SELECT DateTime, Title, Borrower, Amount FROM" +
-                       " financings ORDER BY DateTime DESC LIMIT 50;")
+    deals = db.execute("SELECT DateTime, Ticker, Return, Margin Interest Pmts FROM" +
+                       " AEMKLG ORDER BY DateTime;")
     conn.commit()
-    return render_template("index.html", deals=deals)
+    # TODO: Format this so it can be plotted easily
+    return render_template("index.html", positions=positions)
 
 
 @app.template_filter('strftime')
