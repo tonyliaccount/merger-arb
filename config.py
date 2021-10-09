@@ -1,1 +1,0 @@
-SECRET_KEY = b'\xd3yQ\x08$\xb0=\x1c\x06q\xeb`nX\x10t
