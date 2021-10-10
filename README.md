@@ -1,4 +1,5 @@
 # Merger-Arb
+![Test Runner](https://github.com/adam-grinbergs/Merger-Arb/actions/workflows/test_runner.yml/badge.svg)
 
 A real-time drama story tracking the rise and fall of an algorithmic trader who arbitrages real mining company M&amp;A transactions. 
 
