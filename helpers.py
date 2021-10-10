@@ -57,6 +57,37 @@ def calculate_merger(days: int, stocks: list, exchange_rate: float,
     return total_gain
 
 
+def margin_call_long(price: float, initial_margin: float,
+                     maintenance_margin: float) -> float:
+    """Calculates the margin call price of holding a security based on its
+    initial price, it's initial margin requirement, and its maintenance margin
+    requirement.
+
+    Args:
+        price (float): price in $/share of the security
+        initial_margin (float): percentage (typically 40%) of the total
+        value of the trade which must be paid for by the investor
+        maintenance_margin (float): percentage requirement (typically 20%) of
+        the value of the trade which the initial margin posted must exceed.
+
+    Returns:
+        float: share price below which a margin call is triggered and the
+        investor must post additional margin or the brokerage will unwind their
+        positions.
+    """
+    if price <= 0:
+        raise ValueError("Stock price can't be negative")
+    if initial_margin <= 0:
+        raise ZeroDivisionError("Initial margin can't be zero")
+    if maintenance_margin <= 0:
+        raise ZeroDivisionError("Maintenance margin can't be zero")
+    if initial_margin < maintenance_margin:
+        raise ZeroDivisionError("Maintenance margin can't be greater than" +
+                                " initial margin")
+    margin_call_price = (price * (1 - initial_margin) /
+                         (1 - maintenance_margin))
+    return margin_call_price
+
 
 # def get_prices(tickers: list)->list:
 #     """Returns the most recent stock price"""
