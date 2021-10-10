@@ -12,8 +12,8 @@ from helpers import margin_call_long
 #         commission = 9.99
 #         position_size = 200000
 #         initial_margin = 0.4
-#         assert(calculate_merger(days, stocks, exchange_range, margin_interest,
-#                commission, position_size, initial_margin), )
+#         assert(calculate_merger(days, stocks, exchange_range,
+#                margin_interest, commission, position_size, initial_margin), )
 
 
 class MarginCallPriceTestCase(unittest.TestCase):

@@ -1,8 +1,8 @@
-import sqlite3
-from sqlite3 import Error
-from sqlite3.dbapi2 import enable_callback_tracebacks
-import yahoofinancials as yf
-from datetime import datetime
+# import sqlite3
+# from sqlite3 import Error
+# from sqlite3.dbapi2 import enable_callback_tracebacks
+# import yahoofinancials as yf
+# from datetime import datetime
 
 
 def calculate_merger(days: int, stocks: list, exchange_rate: float,
@@ -33,7 +33,7 @@ def calculate_merger(days: int, stocks: list, exchange_rate: float,
     # Leveraged position size
     buying_power = position_size / initial_margin - commission * 2
     current_rate = stocks[0]['Price'] / stocks[1]['Price']
-    if current_rate > exchange_rate: # First stock trading at premium
+    if current_rate > exchange_rate:  # First stock trading at premium
         stocks[0]['Action'] = 'Long'
         stocks[1]['Action'] = 'Short'
     else:
@@ -45,14 +45,14 @@ def calculate_merger(days: int, stocks: list, exchange_rate: float,
             total_long_value = buying_power * long_weight
             long_loan = total_long_value - position_size * long_weight
             long_interest = long_loan * (1 + margin_interest)**(days/365)
-            long_quantity = long_value / stock['Price']  # Shares to buy
+            # long_quantity = long_value / stock['Price']  # Shares to buy
         if stock['Action'] == 'Short':
             total_short_value = buying_power - total_long_value
             short_loan = total_short_value - position_size * (1 - long_weight)
             short_interest = short_loan * (1 + margin_interest)**(days/365)
-            short_quantity = total_short_value / stock['Price']
+            # short_quantity = total_short_value / stock['Price']
     total_interest = long_interest + short_interest
-    total_pmts = total_interest + commission # Pay commission to exit positions
+    total_pmts = total_interest + commission  # Pay commission exit positions
     total_gain = total_short_value - total_long_value - total_pmts
     return total_gain
 
@@ -104,14 +104,13 @@ def margin_call_long(price: float, initial_margin: float,
 #     now = datetime.now()
 #     prices = get_prices(tickers)
 #     conn = create_connection(db_file)
-#     db = conn.cursor() 
+#     db = conn.cursor()
 #     # Add the price to the database and determine the holding period return
 #     for price in prices:
 #         ticker = price[0]
 #         value = price[1]
 #         db.execute('SELECT price FROM aemklg WHERE Ticker = ? ORDER BY'
 #                    'DateTime DESC LIMIT 1;')
-
 
 
 # def create_connection(db_file):
