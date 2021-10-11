@@ -1,5 +1,5 @@
 import unittest
-from helpers import margin_call_price
+from helpers import calculate_acquisition_arb, margin_call_price
 
 # class CalculateMergerTestCase(unittest.TestCase):
 #     def test_positive(self):
@@ -14,6 +14,32 @@ from helpers import margin_call_price
 #         initial_margin = 0.4
 #         assert(calculate_merger(days, stocks, exchange_range,
 #                margin_interest, commission, position_size, initial_margin), )
+
+
+class AcqArbTestCase(unittest.TestCase):
+    def test_long(self):
+        args = {
+                'share_price': 50,
+                'acquire_price': 60,
+                'days': 190,
+                'initial_margin': 0.4,
+                'margin_interest': 0.04,
+                'commission': 9.99,
+                'buying_power': 150000,
+        }
+        assert round(calculate_acquisition_arb(**args), 2) == 28133.66
+
+    def test_short(self):
+        args = {
+                'share_price': 70,
+                'acquire_price': 60,
+                'days': 190,
+                'initial_margin': 0.4,
+                'margin_interest': 0.04,
+                'commission': 9.99,
+                'buying_power': 150000,
+        }
+        assert round(calculate_acquisition_arb(**args), 2) == 19562.23
 
 
 class MarginCallPriceTestCase(unittest.TestCase):
