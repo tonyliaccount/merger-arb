@@ -1,0 +1,27 @@
+enum MarginType {
+    LONG
+    SHORT
+}
+
+type Query {
+    hello : String!
+    marginCallPriceHistory: [MarginCallPrice]!
+}
+
+type MarginCallPrice {
+    id: String!
+    price: Float!
+    initial_margin: Float!
+    maintenance_margin: Float!
+    type: String!
+    margin_call_price: Float!
+}
+
+type Mutation {
+    marginCallPrice(
+        price: Float!
+        initial_margin: Float!
+        maintenance_margin: Float!
+        type: MarginType!
+    ): MarginCallPrice
+}
