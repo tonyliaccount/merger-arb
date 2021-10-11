@@ -1,17 +1,7 @@
 # Merger-Arb
 ![Test Runner](https://github.com/adam-grinbergs/Merger-Arb/actions/workflows/test_runner.yml/badge.svg)
 
-A real-time drama story tracking the rise and fall of an algorithmic trader who arbitrages real mining company M&amp;A transactions. 
-
-> If you're lost you can look, and you will find me
->
-> Time after time
->
-> If you fall, I will catch you; I'll be waiting
->
-> Time after time
-
-Eve Cassidy, *Time after Time*
+![Bobby](https://user-images.githubusercontent.com/52611108/136868708-ff4c9300-b162-439e-8ad3-51daf7705033.jpg)
 
 ## Introduction
 
