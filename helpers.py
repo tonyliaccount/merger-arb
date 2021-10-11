@@ -5,9 +5,9 @@
 # from datetime import datetime
 
 
-def calculate_merger(days: int, stocks: list, exchange_rate: float,
-                     margin_interest: float, commission: float,
-                     position_size: float, initial_margin: float) -> float:
+def calculate_merger_arb(days: int, stocks: list, exchange_rate: float,
+                         margin_interest: float, commission: float,
+                         position_size: float, initial_margin: float) -> float:
     """Given an expected merger transaction, calculate the return of a long
     short position based on the apparent premium or discount.
     Args:
@@ -31,34 +31,47 @@ def calculate_merger(days: int, stocks: list, exchange_rate: float,
     # TODO: Eventually account for the fact I assume you can buy fractions
     # TODO: of a share
     # Leveraged position size
-    buying_power = position_size / initial_margin - commission * 2
     current_rate = stocks[0]['Price'] / stocks[1]['Price']
+    buying_power = position_size / initial_margin - commission * 2
     if current_rate > exchange_rate:  # First stock trading at premium
-        stocks[0]['Action'] = 'Long'
-        stocks[1]['Action'] = 'Short'
-    else:
-        stocks[1]['Action'] = 'Long'
-        stocks[1]['Action'] = 'Short'
+        shares = calculate_shares(stocks[1]['Price'], stocks[0]['Price'],
+                                  buying_power)
     for stock in stocks:
         if stock['Action'] == 'Long':
-            long_weight = exchange_rate
-            total_long_value = buying_power * long_weight
+            total_long_value = shares * stock['Price']
             long_loan = total_long_value - position_size * long_weight
             long_interest = long_loan * (1 + margin_interest)**(days/365)
-            # long_quantity = long_value / stock['Price']  # Shares to buy
         if stock['Action'] == 'Short':
             total_short_value = buying_power - total_long_value
             short_loan = total_short_value - position_size * (1 - long_weight)
             short_interest = short_loan * (1 + margin_interest)**(days/365)
-            # short_quantity = total_short_value / stock['Price']
     total_interest = long_interest + short_interest
     total_pmts = total_interest + commission  # Pay commission exit positions
     total_gain = total_short_value - total_long_value - total_pmts
     return total_gain
 
 
-def margin_call_long(price: float, initial_margin: float,
-                     maintenance_margin: float) -> float:
+def calculate_shares(long_price: float, short_price: float,
+                     buying_power: float) -> dict:
+    """Given the spread to create, the prices of the stocks to use, and
+    the buying power of the account, return the number of shares to go long
+
+    Args:
+        long_price (float): price of the stock to long
+        short_price (float): price of the stock to short
+        buying_power (float): amount of money investor can leverage
+
+    Returns:
+        shares(dict): number of shares of each to take
+    """
+    long_short_rate = long_price / short_price  # Figures out ratio to buy
+    long_shares = buying_power / (long_price + short_price / long_short_rate)
+    short_shares = (buying_power - long_shares * long_price) / short_price
+    return {'long_shares': long_shares, 'short_shares': short_shares}
+
+
+def margin_call_price(price: float, initial_margin: float,
+                      maintenance_margin: float, type: str = "long") -> float:
     """Calculates the margin call price of holding a security based on its
     initial price, it's initial margin requirement, and its maintenance margin
     requirement.
@@ -69,6 +82,7 @@ def margin_call_long(price: float, initial_margin: float,
         value of the trade which must be paid for by the investor
         maintenance_margin (float): percentage requirement (typically 20%) of
         the value of the trade which the initial margin posted must exceed.
+        type(str): if its a long trade or a short trade.
 
     Returns:
         float: share price below which a margin call is triggered and the
@@ -84,8 +98,11 @@ def margin_call_long(price: float, initial_margin: float,
     if initial_margin < maintenance_margin:
         raise ZeroDivisionError("Maintenance margin can't be greater than" +
                                 " initial margin")
-    margin_call_price = (price * (1 - initial_margin) /
-                         (1 - maintenance_margin))
+    if type == "long":
+        margin_call_price = (price * (1 - initial_margin) /
+                             (1 - maintenance_margin))
+    if type == "short":
+        margin_call_price = price * initial_margin / maintenance_margin
     return margin_call_price
 
 

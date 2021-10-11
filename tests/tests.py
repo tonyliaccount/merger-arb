@@ -1,5 +1,5 @@
 import unittest
-from helpers import margin_call_long
+from helpers import margin_call_price
 
 # class CalculateMergerTestCase(unittest.TestCase):
 #     def test_positive(self):
@@ -17,15 +17,26 @@ from helpers import margin_call_long
 
 
 class MarginCallPriceTestCase(unittest.TestCase):
-    def test_base(self):
+    def test_base_long(self):
         """Share price dropping below 37.5 trigger margin call"""
         args = {
                 'price': 50,
                 'initial_margin': 0.4,
                 'maintenance_margin': 0.2,
         }
-        margin_call_long_price = margin_call_long(**args)
-        assert margin_call_long_price == 37.5
+        price = margin_call_price(**args)
+        assert price == 37.5
+
+    def test_base_short(self):
+        """Share price climbing above 80 triggers margin call"""
+        args = {
+                'price': 40,
+                'initial_margin': 0.4,
+                'maintenance_margin': 0.2,
+                'type': 'short',
+        }
+        price = margin_call_price(**args)
+        assert price == 80
 
     def test_stock_price(self):
         """Make sure initial price still can't be negative"""
@@ -35,7 +46,7 @@ class MarginCallPriceTestCase(unittest.TestCase):
                 'maintenance_margin': 0.2,
         }
         with self.assertRaises(ValueError) as context:
-            margin_call_long(**args)
+            margin_call_price(**args)
         self.assertTrue("Stock price can't be negative" in
                         str(context.exception))
 
@@ -47,7 +58,7 @@ class MarginCallPriceTestCase(unittest.TestCase):
                 'maintenance_margin': 0.2,
         }
         with self.assertRaises(ZeroDivisionError) as context:
-            margin_call_long(**args)
+            margin_call_price(**args)
         self.assertTrue("Initial margin can't be zero" in
                         str(context.exception))
 
@@ -59,7 +70,7 @@ class MarginCallPriceTestCase(unittest.TestCase):
                 'maintenance_margin': 0,
         }
         with self.assertRaises(ZeroDivisionError) as context:
-            margin_call_long(**args)
+            margin_call_price(**args)
         self.assertTrue("Maintenance margin can't be zero" in
                         str(context.exception))
 
@@ -72,7 +83,7 @@ class MarginCallPriceTestCase(unittest.TestCase):
                 'maintenance_margin': 0.5,
         }
         with self.assertRaises(ZeroDivisionError) as context:
-            margin_call_long(**args)
+            margin_call_price(**args)
         self.assertTrue(("can't be greater than") in str(context.exception))
 
 
