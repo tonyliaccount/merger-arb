@@ -12,11 +12,11 @@ def calculate_merger_arb(days: int, stocks: list, exchange_rate: float,
     short position based on the apparent premium or discount.
     Args:
         days (int): number of days to hold positions
-      stocks (list): list of dictionaries containing stocks and their current
+        stocks (list): list of dictionaries containing stocks and their current
         prices
         exchange_rate (float): rate at which stocks of first company will be
         exchanged for stocks of second company.
-      margin_interest (float): yearly interest charge for margin purchase and
+        margin_interest (float): yearly interest charge for margin purchase and
         short sales.
         commission (float): cost per buy and sell order from broker
         position_size(float): amount of money to wager in trade
@@ -31,16 +31,21 @@ def calculate_merger_arb(days: int, stocks: list, exchange_rate: float,
     # TODO: Eventually account for the fact I assume you can buy fractions
     # TODO: of a share
     current_rate = stocks[0]['Price'] / stocks[1]['Price']
-    l, s = (1, 2) if current_rate > exchange_rate else (0, 1)
+    if current_rate > exchange_rate:  # Firm 1 is trading at a premium
+        l, s = (1, 0)  # Short firm 1, long firm 2
+        long_short_rate = 1 / exchange_rate
+    else:  # Firm 1 is trading at a discount
+        l, s = (0, 1)  # Short firm 2, long firm 1
+        long_short_rate = exchange_rate
     buying_power = position_size / initial_margin - commission * 2
     shares = calculate_shares(stocks[l]['Price'], stocks[s]['Price'],
-                              buying_power)
+                              buying_power, long_short_rate)
     total_long_value = shares['long_shares'] * stocks[l]['Price']
     long_loan = total_long_value * (1 - initial_margin)
-    long_interest = long_loan * (1 + margin_interest)**(days/365)
+    long_interest = long_loan * ((1 + margin_interest)**(days/365) - 1)
     total_short_value = shares['short_shares'] * stocks[s]['Price']
     short_loan = total_short_value * (1 - initial_margin)
-    short_interest = short_loan * (1 + margin_interest)**(days/365)
+    short_interest = short_loan * ((1 + margin_interest)**(days/365) - 1)
     total_interest = long_interest + short_interest
     total_pmts = total_interest + commission  # Pay commission exit positions
     total_gain = total_short_value - total_long_value - total_pmts
@@ -83,7 +88,7 @@ def calculate_acquisition_arb(share_price: float, acquire_price: float,
 
 
 def calculate_shares(long_price: float, short_price: float,
-                     buying_power: float) -> dict:
+                     buying_power: float, long_short_rate: float) -> dict:
     """Given the spread to create, the prices of the stocks to use, and
     the buying power of the account, return the number of shares to go long
 
@@ -91,11 +96,12 @@ def calculate_shares(long_price: float, short_price: float,
         long_price (float): price of the stock to long
         short_price (float): price of the stock to short
         buying_power (float): amount of money investor can leverage
+        long_short_rate (float): desired rate based on exchange value
 
     Returns:
         shares(dict): number of shares of each to take
     """
-    long_short_rate = long_price / short_price  # Figures out ratio to buy
+    # TODO: Write tests
     long_shares = buying_power / (long_price + short_price / long_short_rate)
     short_shares = (buying_power - long_shares * long_price) / short_price
     return {'long_shares': long_shares, 'short_shares': short_shares}

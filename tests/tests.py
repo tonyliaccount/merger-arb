@@ -1,6 +1,6 @@
 import unittest
-from helpers import calculate_acquisition_arb, margin_call_price, \
-    calculate_merger_arb
+from helpers import calculate_acquisition_arb, calculate_shares, \
+    margin_call_price, calculate_merger_arb
 
 
 class CalculateMergerTestCase(unittest.TestCase):
@@ -8,15 +8,15 @@ class CalculateMergerTestCase(unittest.TestCase):
         """Check a regular case with a reasonable merger"""
         args = {
             'days': 30 * 4,  # ~4 months
-            'stocks': [{'Name': 'KLG', 'Price': 51.43},
-                       {'Name': 'AEM', 'Price': 67.29}],
+            'stocks': [{'Name': 'AEM', 'Price': 67.29},
+                       {'Name': 'KLG', 'Price': 51.43}],
             'exchange_rate': 0.7935,
             'margin_interest': 0.04,
             'commission': 9.99,
             'position_size': 200000,
             'initial_margin': 0.4,
         }
-        assert(calculate_merger_arb(**args))  # I need to finish this
+        assert round(calculate_merger_arb(**args), 2) == 5467.36
 
 
 class AcqArbTestCase(unittest.TestCase):
@@ -43,6 +43,19 @@ class AcqArbTestCase(unittest.TestCase):
                 'buying_power': 150000,
         }
         assert round(calculate_acquisition_arb(**args), 2) == 19562.23
+
+
+class CalculateSharesTest(unittest.TestCase):
+    def test_base(self):
+        """Return appropriate long and short positions"""
+        args = {
+            'long_price': 51.43,
+            'short_price': 67.29,
+            'buying_power': 500000,
+            'long_short_rate': 1 / 0.7935
+        }
+        print(calculate_shares(**args)['long_shares'])
+        assert round(calculate_shares(**args)['long_shares'], 2) == 4769.87
 
 
 class MarginCallPriceTestCase(unittest.TestCase):
